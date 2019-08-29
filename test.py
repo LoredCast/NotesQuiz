@@ -31,11 +31,11 @@ stream = p.open(format=FORMAT,
 
 
 
-print(np.frombuffer(stream.read(CHUNK), 'Int16'))
+print(np.frombuffer(stream.read(CHUNK), 'float32'))
 frames = []
 
 for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-    data = np.frombuffer(stream.read(CHUNK), 'Int16')
+    data = np.frombuffer(stream.read(CHUNK), 'float32')
     frames.append(data)
 
 
@@ -58,7 +58,7 @@ def update(data):
 def data_gen():
     while True:
 
-        data = np.frombuffer(stream.read(CHUNK * int((RATE / CHUNK * RECORD_SECONDS))), 'Int16')
+        data = np.frombuffer(stream.read(CHUNK * int((RATE / CHUNK * RECORD_SECONDS))), 'float32')
         yield data
 
 
