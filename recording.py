@@ -1,17 +1,20 @@
 import pyaudio
+import time
 from itertools import chain
 import wave
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from scipy.fftpack import fft
 
 CHUNK = 1024
-FORMAT = pyaudio.paInt16
+FORMAT = pyaudio.paFloat32
 CHANNELS = 1
 RATE = 44100
-RECORD_SECONDS = 1
-WAVE_OUTPUT_FILENAME = "temp_output.wav"
+INTERVAL = 1  # in s
+LIM = 0.12  # Sensitivity
+SIZE = INTERVAL * RATE
 
 p = pyaudio.PyAudio()
 
@@ -21,36 +24,33 @@ stream = p.open(format=FORMAT,
                 input=True,
                 frames_per_buffer=CHUNK)
 
-# Main loop
-frames = []
-print(stream.read(1024))
-#for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-    #data = np.fromstring(stream.read(CHUNK), 'Int16')
-    #frames.append(data)
+T = 1 / RATE
+x = np.linspace(0.0, 1.0 / (2 * T), int(SIZE / 2))
+
+time = 0
+
+while True:
+    frames = []
+
+    for i in range(0, int(RATE / CHUNK * INTERVAL)):
+        data = np.frombuffer(stream.read(CHUNK), 'float32')
+        frames.append(data)
+
+    frames = list(chain.from_iterable(frames))
+    yr = fft(frames)
+    y = 2 / SIZE * np.abs(yr[0:np.int(SIZE / 2)])
+    freqs = dict(zip(x, y))
+    time += INTERVAL
 
 
+    for f in freqs:
+        if freqs.get(f) > LIM:
+            print(f)
+    print(time)
 
-yData = list(chain.from_iterable(frames))
-print(stream.read(1024))
+#plt.plot(x,y)
+#plt.show()
 
-
-fig, ax = plt.subplots()
-line, = ax.plot(yData)
-
-
-def update(data):
-    line.set_ydata(data)
-    return line,
-
-
-def data_gen():
-    while True:
-        data = np.fromstring(stream.read(CHUNK * int((RATE / CHUNK * RECORD_SECONDS))), 'Int16')
-        yield data
-
-
-ani = animation.FuncAnimation(fig, update, data_gen, interval=100)
-plt.show()
 
 stream.stop_stream()
 stream.close()
