@@ -11,7 +11,8 @@ CHUNK = 1024
 FORMAT = pyaudio.paFloat32
 CHANNELS = 1
 RATE = 44100
-RECORD_SECONDS = 0.1
+RECORD_SECONDS = 0.5
+
 WAVE_OUTPUT_FILENAME = "temp_output.wav"
 
 p = pyaudio.PyAudio()
@@ -49,6 +50,9 @@ def data_gen():
 
 ani = animation.FuncAnimation(fig, update, data_gen, interval=100)
 plt.show()
+
+
+
 
 stream.stop_stream()
 stream.close()

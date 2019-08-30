@@ -32,7 +32,7 @@ Pitches = [65.4064]
 Root = 65.4064
 for Tone in range(48):
     Root = Root * 2 ** (1 / 12)
-    Pitches.append(Root)
+    Pitches.append(round(Root, 1))
 
 rootNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 Notes = []
@@ -44,9 +44,9 @@ for line in range(4):
             Notes.append(e)
 
 
-Tones = dict(zip(Notes, Pitches))
+Tones = dict(zip(Pitches, Notes))
 
-print(Tones)
+
 
 
 while True:

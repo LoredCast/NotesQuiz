@@ -4,8 +4,8 @@ from matplotlib import pyplot as plt
 from scipy.fftpack import fft
 
 t_start = 0  # time in s
-t_end = 1  # time in is
-sampling_rate = 1000  # in Hz
+t_end = 1  # time in s
+sampling_rate = 1024  # in Hz
 N = (t_end - t_start)*sampling_rate  # number of samples in set interval
 
 # frequencies in set interval
